@@ -4,45 +4,49 @@ import { useEffect, useState } from 'react';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
-
+import Button from '@mui/material/Button';
+import CardActions from '@mui/material/CardActions';
 import Box from '@mui/material/Box';
-
+import TextField from '@mui/material/TextField';
+import CardMedia from '@mui/material/CardMedia';
+//import PS5 from './PS5.jpg';
+//import PS from './PS.png';
+//import Xbox from './Xbox.jpg';
+//import Steam from './Steam.jpg';
 
 export function ListingScreen() {
 
     
 
-    const [listingResponse, setListingResponse] = useState(null);
-    const [activeResponse, setActiveResponse] = useState(null);
-    const [listing, setListing] = useState(null);
-    const [listings, setListings] = useState(null);
-    const [newbaby, setnewbaby] = useState(null);
-    const [oldbaby, setoldbaby] = useState(null);
+  const path = "api/listings?search=";
+  //const photos = [{PS5}, {PS}, {Xbox}];
+    
+  const [activeResponse, setActiveResponse] = useState(null);  
+  const [searchResponse] = useState(null);
+
+  const onSearch = (e) => {
+    e.preventDefault();
+    const search = e.target.value;
+    const url = path + search;
+    
+
+    axios.get(url).then((response) => {
+        setActiveResponse(response?.data);
+    });
+
+    console.log(activeResponse);
+
+    
+
+};
+
 
     useEffect(() => {
         axios.get('api/listings?').then((response) => {
             setActiveResponse(response?.data);
         });
-        axios.get('api/listings?').then((response) => {
-         setListingResponse(response?.data);
-        });
-
-        axios.get('/api/listings/2').then((response) => {
-          setListing(response?.data);
-      });
-      axios.get('/api/listings/2/items').then((response) => {
-        setListings(response?.data);
-      });
-
-      axios.get('/api/listings/3').then((response) => {
-        setnewbaby(response?.data);
-    });
-    axios.get('/api/listings/3/items').then((response) => {
-      setoldbaby(response?.data);
-    });
       }, []);
 
-      console.log(listingResponse);
       console.log(activeResponse);
 
 
@@ -61,38 +65,51 @@ export function ListingScreen() {
         },
       }}
     >
-      <Card sx={{ minWidth: 275 }}>
-      <CardContent>
-        <Typography variant="h5" component="div">
-        {!activeResponse ? "is null" : <ul>{activeResponse.name}</ul>}
-        </Typography>
-        <Typography variant="body2">
-        {!listingResponse ? "is null" : <ul>{listingResponse.map(x => <li key={x.id}>{x.productName}</li>)}</ul>}
-        </Typography>
-      </CardContent>
-    </Card>
+       <TextField
+            type="text"
+            className="form-control"
+            name="Search"
+            align = "right"
+            value={searchResponse}
+            onChange={onSearch}
+          />
 
-    <Card sx={{ minWidth: 275 }}>
-      <CardContent>
-        <Typography variant="h5" component="div">
-        {!listing ? "is null" : <ul>{listing.name}</ul>}
-        </Typography>
-        <Typography variant="body2">
-        {!listings ? "is null" : <ul>{listings.map(x => <li key={x.id}>{x.productName}</li>)}</ul>}
-        </Typography>
-      </CardContent>
-    </Card>
+      <br></br>
 
-    <Card sx={{ minWidth: 275 }}>
-      <CardContent>
-        <Typography variant="h5" component="div">
-        {!newbaby ? "is null" : <ul>{newbaby.name}</ul>}
-        </Typography>
-        <Typography variant="body2">
-        {!oldbaby ? "is null" : <ul>{oldbaby.map(x => <li key={x.id}>{x.productName}</li>)}</ul>}
-        </Typography>
-      </CardContent>
-    </Card>
+      {!activeResponse ? "is null": activeResponse.map(x =>
+        <Card sx={{ minWidth: 350, height: 500 }} key={x.id}>
+          
+          <CardMedia
+        
+        
+        
+      />
+          <CardContent>
+            <Typography gutterBottom variant="h5" component="div">
+              {x.name}
+            </Typography>
+            <Typography>
+              {x.price}
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              {x.itemsForSale.map(x => <li key={x.id}>{x.productName}</li>)}
+            </Typography>
+          </CardContent>
+          <CardActions>
+            <Button style= {{align: "center"}}>Buy</Button>
+          </CardActions>
+        </Card>)}
+
+        
+
+        
+       
+
+        
+        
+
+      
+    
 
     </Box>
 
